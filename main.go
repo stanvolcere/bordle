@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	fmt.Printf("Bro this is working now! @%s", time.Now().UTC())
+	fmt.Printf("Main func up and running! @%s", time.Now().UTC())
 }
