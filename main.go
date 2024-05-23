@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
-	"time"
+	"bordle/bordle"
 )
 
 func main() {
-	fmt.Printf("Bro this is working now! @%s", time.Now().UTC())
+	b := bordle.New()
+	b.Play()
 }
