@@ -20,6 +20,7 @@ type Game struct {
 func New(playerInput io.Reader) *Game {
 	g := &Game{
 		reader: bufio.NewReader(playerInput),
+		word:   pickRandomWord(),
 	}
 
 	// Initialise the game
@@ -31,7 +32,8 @@ func New(playerInput io.Reader) *Game {
 func (g *Game) Play() {
 	fmt.Println("Welcome to Bordle!")
 	fmt.Printf("Enter a guess\n")
-	g.ask()
+	guess := g.ask()
+	fmt.Printf("Your guess is: %s\n", string(guess))
 }
 
 // Function will ask the player for their next guess
@@ -51,14 +53,27 @@ func (g *Game) ask() []rune {
 
 		guess := []rune(string(playerInput))
 
-		if len(guess) != solutionLength {
-			_, _ = fmt.Fprintf(os.Stderr, "Your attempt is invalid with Gordle's solution! Expected %d characters, got %d.\n", solutionLength, len(guess))
+		// validate the player's guess
+		err = g.validateGuess(guess, len(g.word))
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "Your attempt is invalid with Gordle's solution: %s\n", err.Error())
 		} else {
 			return guess
 		}
-
 	}
 
+}
+
+// errInvalidWordLength is returned when the guess has the wrong number of characters.
+var errInvalidWordLength = fmt.Errorf("invalid guess, word doesn't have the same number of characters as the solution")
+
+// ensures the guess is at least a valid guess before proceeding
+func (g *Game) validateGuess(guess []rune, wordLength int) error {
+	if len(guess) != wordLength {
+		// _, _ = fmt.Fprintf(os.Stderr, "Your attempt is invalid with Gordle's solution! Expected %d characters, got %d.\n", solutionLength, len(guess))
+		return fmt.Errorf("expected %d characters, got %d, %w", solutionLength, len(guess), errInvalidWordLength)
+	}
+	return nil
 }
 
 func pickRandomWord() string {

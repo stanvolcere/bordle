@@ -1,8 +1,13 @@
 package main
 
+import (
+	"bordle/bordle"
+	"os"
+)
+
 func main() {
-	// b := bordle.New()
-	// b.Play()
+	b := bordle.New(os.Stdin)
+	b.Play()
 
 	// it takes 3 bytes to represent non-latin characters
 	// fmt.Println(len("Hello, 世界"))
