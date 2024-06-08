@@ -45,7 +45,7 @@ func (g *Game) ask() []rune {
 		playerInput, _, err := g.reader.ReadLine()
 
 		if err != nil {
-			fmt.Fprint(os.Stderr, "We failed to read your guess %s\n", err.Error())
+			fmt.Fprintf(os.Stderr, "We failed to read your guess %s\n", err.Error())
 			continue
 		}
 
