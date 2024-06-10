@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	b := bordle.New(os.Stdin)
+	b := bordle.New(os.Stdin, "house", 3)
 	b.Play()
 
 	// it takes 3 bytes to represent non-latin characters

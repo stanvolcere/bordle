@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 // Length of the word in the game
@@ -12,19 +13,21 @@ const solutionLength = 5
 
 // / Type tp represent the game state.
 type Game struct {
-	word   string
-	reader *bufio.Reader
+	word        string
+	reader      *bufio.Reader
+	maxAttempts int
 }
 
 // Function to return a new bordle game.
-func New(playerInput io.Reader) *Game {
+func New(playerInput io.Reader, solution string, maxAttempts int) *Game {
 	g := &Game{
-		reader: bufio.NewReader(playerInput),
-		word:   pickRandomWord(),
+		reader:      bufio.NewReader(playerInput),
+		word:        solution,
+		maxAttempts: maxAttempts,
 	}
 
-	// Initialise the game
-	g.word = pickRandomWord()
+	// // Initialise the game
+	// g.word = pickRandomWord()
 
 	return g
 }
@@ -51,7 +54,8 @@ func (g *Game) ask() []rune {
 			continue
 		}
 
-		guess := []rune(string(playerInput))
+		// string(playerInput) wraps the []byte from the readline func
+		guess := splitToUppercaseCharacters(string(playerInput))
 
 		// validate the player's guess
 		err = g.validateGuess(guess, len(g.word))
@@ -62,6 +66,14 @@ func (g *Game) ask() []rune {
 		}
 	}
 
+}
+
+// splitToUppercaseCharacters is a naive implementation to turn a string into a list of characters.
+func splitToUppercaseCharacters(input string) []rune {
+	// will convert each byte (character) to uppercase
+	// +
+	// converts to runes
+	return []rune(strings.ToUpper(input))
 }
 
 // errInvalidWordLength is returned when the guess has the wrong number of characters.
