@@ -64,14 +64,16 @@ func (g *Game) ask() []rune {
 		err = g.validateGuess(guess, len(g.word))
 		if err != nil {
 			_, _ = fmt.Fprintf(os.Stderr, "Your attempt is invalid with Gordle's solution: %s\n", err.Error())
-		} else {
-			//return guess
+			continue
 		}
 
 		// check whether the guess is correct or not
 		result, success := g.testGuess(guess)
 
-		if attempt+1 == g.maxAttempts || success == 1 {
+		println("success")
+		println(success)
+
+		if attempt == g.maxAttempts || success == 1 {
 			return result
 		}
 
@@ -111,9 +113,6 @@ func (g *Game) testGuess(guess []rune) ([]rune, int) {
 	// fmt.Printf("Index: %d, Rune: %c, Unicode: %U\n", wordAsRune, wordAsRune, wordAsRune)
 
 	for i, r := range wordAsRune {
-		// fmt.Printf("r %c\n", r)
-		// fmt.Printf("i %c\n", guess[i])
-
 		if r == guess[i] {
 			newGuess[i] = r
 		} else {
