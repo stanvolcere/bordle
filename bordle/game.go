@@ -42,9 +42,10 @@ func (g *Game) Play() {
 // Function will ask the player for their next guess
 // and return slice of runes[]
 func (g *Game) ask() []rune {
-	fmt.Printf("Enter a %d-character guess:\n", solutionLength)
+	attempt := 1
 
 	for {
+		fmt.Printf("Enter a %d-character guess:\n", solutionLength)
 		// The ReadLine method will give us the
 		// user’s input as a slice of bytes.
 		playerInput, _, err := g.reader.ReadLine()
@@ -55,6 +56,8 @@ func (g *Game) ask() []rune {
 		}
 
 		// string(playerInput) wraps the []byte from the readline func
+		// returns the chars in the form of []runes
+		// aka []int32
 		guess := splitToUppercaseCharacters(string(playerInput))
 
 		// validate the player's guess
@@ -62,10 +65,21 @@ func (g *Game) ask() []rune {
 		if err != nil {
 			_, _ = fmt.Fprintf(os.Stderr, "Your attempt is invalid with Gordle's solution: %s\n", err.Error())
 		} else {
-			return guess
+			//return guess
 		}
-	}
 
+		// check whether the guess is correct or not
+		result, success := g.testGuess(guess)
+
+		if attempt+1 == g.maxAttempts || success == 1 {
+			return result
+		}
+
+		fmt.Printf("Your guess so far: %s\n", string(result))
+		fmt.Printf("Attempts remaining: %d\n", g.maxAttempts-attempt)
+		fmt.Printf("----------\n")
+		attempt++
+	}
 }
 
 // splitToUppercaseCharacters is a naive implementation to turn a string into a list of characters.
@@ -86,6 +100,28 @@ func (g *Game) validateGuess(guess []rune, wordLength int) error {
 		return fmt.Errorf("expected %d characters, got %d, %w", solutionLength, len(guess), errInvalidWordLength)
 	}
 	return nil
+}
+
+func (g *Game) testGuess(guess []rune) ([]rune, int) {
+	// if cound then return a 1 else return 0
+	newGuess := make([]rune, len(g.word))
+
+	wordAsRune := splitToUppercaseCharacters(g.word)
+
+	// fmt.Printf("Index: %d, Rune: %c, Unicode: %U\n", wordAsRune, wordAsRune, wordAsRune)
+
+	for i, r := range wordAsRune {
+		// fmt.Printf("r %c\n", r)
+		// fmt.Printf("i %c\n", guess[i])
+
+		if r == guess[i] {
+			newGuess[i] = r
+		} else {
+			newGuess[i] = 0
+		}
+	}
+
+	return newGuess, 0
 }
 
 func pickRandomWord() string {
