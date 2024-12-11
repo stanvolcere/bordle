@@ -70,10 +70,14 @@ func (g *Game) ask() []rune {
 		// check whether the guess is correct or not
 		result, success := g.testGuess(guess)
 
-		println("success")
-		println(success)
-
 		if attempt == g.maxAttempts || success == 1 {
+			if success == 1 {
+				fmt.Printf("Congratulations you found the word it was: %s\n", g.word)
+			}
+			if attempt == g.maxAttempts {
+				fmt.Printf("You lose! You ran out of attempts. The word was: %s\n", g.word)
+			}
+
 			return result
 		}
 
@@ -120,7 +124,24 @@ func (g *Game) testGuess(guess []rune) ([]rune, int) {
 		}
 	}
 
+	// check if the word has been found
+	found := allElementsMeetCriteria(newGuess, func(i int32) bool {
+		return i != 0
+	})
+
+	if found {
+		return newGuess, 1
+	}
 	return newGuess, 0
+}
+
+func allElementsMeetCriteria(slice []rune, criteria func(int32) bool) bool {
+	for _, element := range slice {
+		if !criteria(element) {
+			return false // Found an element that doesn't meet the criteria
+		}
+	}
+	return true // All elements meet the criteria
 }
 
 func pickRandomWord() string {
